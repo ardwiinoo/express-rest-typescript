@@ -1,2 +1,17 @@
+# dependencies
 node_modules/
+
+# environment
 .env
+
+# production
+/build
+/dist
+
+# testing
+/coverage
+
+# misc
+DS_Store
+.package-lock.json
+
