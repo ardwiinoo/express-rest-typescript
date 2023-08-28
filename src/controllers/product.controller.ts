@@ -1,46 +1,60 @@
+import { Request, Response } from 'express'
+import { getProductFromDB } from '../services/product.service'
 import { logger } from '../utils/logger'
 import { createProductValidation } from '../validations/product.validation'
-import { Request, Response } from 'express'
+
+interface ProductType {
+  product_id: String
+  name: String
+  price: Number
+}
 
 export const createProduct = (req: Request, res: Response) => {
   const { error, value } = createProductValidation(req.body)
-
   if (error) {
-    logger.error(`[CREATE PRODUCT]: ${error.details[0].message}`)
-    return res.status(422).send({
-      error: true,
-      message: error.details[0].message,
-      data: {}
-    })
+    logger.error('ERR: product - create = ', error.details[0].message)
+    return res.status(422).send({ status: false, statusCode: 422, message: error.details[0].message, data: {} })
   }
-
-  logger.info('Success post data product')
-  res.status(200).send({
-    error: false,
-    message: 'Success post data product',
-    data: value
-  })
+  logger.info('Success add new product')
+  return res.status(200).send({ status: true, statusCode: 200, message: 'Add product success', data: value })
 }
 
-export const getProduct = (req: Request, res: Response) => {
-  // pura pura data
-  let products = [
-    { name: 'Sepatu', price: 20000 },
-    { name: 'Laptop', price: 100000 }
-  ]
+export const getProduct = async (req: Request, res: Response) => {
+  const products: any = await getProductFromDB()
 
   const {
     params: { name }
   } = req
 
   if (name) {
-    products = products.filter((product) => product.name.toLowerCase() === name.toLowerCase())
+    const filterProduct = products.filter((product: ProductType) => {
+      if (product.name === name) {
+        return product
+      }
+    })
+    if (filterProduct.length === 0) {
+      logger.info('Data not found')
+      return res.status(404).send({
+        error: true,
+        message: 'Failed get product data',
+        statusCode: 404,
+        data: {}
+      })
+    }
+    logger.info('Success get product data')
+    return res.status(200).send({
+      error: false,
+      message: 'Success get product data',
+      statusCode: 200,
+      data: filterProduct[0]
+    })
   }
 
-  logger.info('Success get data product')
-  res.status(200).send({
+  logger.info('Success get product data')
+  return res.status(200).send({
     error: false,
-    message: 'Success get data product',
+    message: 'Success get product data',
+    statusCode: 200,
     data: products
   })
 }
