@@ -20,6 +20,7 @@
     "@typescript-eslint/strict-boolean-expressions": "off",
     "@typescript-eslint/ban-types": "off",
     "array-callback-return": "off",
-    "@typescript-eslint/no-misused-promises": "off"
+    "@typescript-eslint/no-misused-promises": "off",
+    "@typescript-eslint/no-confusing-void-expression": "off"
   }
 }

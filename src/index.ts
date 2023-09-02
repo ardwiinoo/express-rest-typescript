@@ -5,6 +5,7 @@ import bodyParser from 'body-parser'
 import cors from 'cors'
 
 import './utils/connectDB'
+import deserializeToken from './middleware/deserializedToken'
 
 const app: Application = express()
 const port: number = 5000
@@ -21,6 +22,8 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   res.setHeader('Access-Control-Allow-Headers', '*')
   next()
 })
+
+app.use(deserializeToken)
 
 routes(app)
 
